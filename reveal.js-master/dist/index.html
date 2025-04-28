@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="./reset.css">
+		<link rel="stylesheet" href="./reveal.css">
+		<link rel="stylesheet" href="./theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section class="init">
+					<h1>WebGL</h1>
+					<p>This article aims to ease the entry threshold into pure WebGL, give an initial idea and suggest where to go next.</p>
+						<img src="https://alvi0avcc.github.io/rs-school/presentation-webgl/assets/canvas-vs-webgl.png" alt="">
+				</section>
+				
+				<section>
+					<section>
+						<h2>WebGL (Web Graphics Library)</h2>
+						<p>A programming library for the JavaScript language</p>
+						<a href="https://www.khronos.org/">https://www.khronos.org/</a>
+					</section>
+				
+					<section>
+						<h2>https://www.khronos.org/</h2>
+						<img src="https://alvi0avcc.github.io/rs-school/presentation-webgl/assets/kronos.png">
+					</section>
+				</section>
+				
+				<section>
+					<h1>WebGL</h1>
+					<p>WebGL, unlike Javascript, has a high entry threshold; few people still use it, and even fewer write about it.</p>
+					<p><a href="https://developer.mozilla.org/ru/docs/Web/API/WebGL_API">https://developer.mozilla.org</a></p>
+				</section>
+				
+				<section>
+					<h1>WebGL</h1>
+					<p>WebGL technology allows you to draw graphics in the browser using the capabilities of the video card</p>
+					<p><a href="https://www.youtube.com/watch?v=-P28LKWTzrI">Mythbusters Demo GPU versus CPU</a></p>
+				</section>
+				
+				<section>
+					<section>
+						<h2>WebGL</h2>
+						<p>If you think WebGL draws 3D, you are wrong. WebGL knows nothing about 3D.</p>
+						<p>All he can do is draw triangles.</p>
+					</section>
+				
+					<section>
+						<h3>WebGL - How to draw a triangle</h3>
+						<p>Unlike OpenGL, WebGL uses only shaders for rendering.</p>
+						<p>A shader is a program that runs on a video card and uses the GLSL language.</p>
+						<p>GLSL (OpenGL Shading Language, Graphics Library Shader Language)</p>
+					</section>
+				
+					<section>
+						<h3>WebGL - shaders</h3>
+						<p>There are two types of shaders: vertex and fragment.</p>
+						<p>If the vertex shader defines the geometry of the figure, then the fragment shader defines its color.</p>
+						<img src="./assets/triangles.png" alt="" style="background-color: lightgray;padding: 10px; border-radius: 5px;">
+					</section>
+				
+				</section>
+				
+				<section>
+					<section>
+
+						<h2>GLSL</h2>
+						<p>OpenGL Shading Language</p>
+						<p>A high-level language for programming shaders.</p>
+						<a href="https://ru.wikipedia.org/wiki/OpenGL_Shading_Language">https://ru.wikipedia.org/wiki/OpenGL_Shading_Language</a>
+
+					</section>
+
+						<section>
+						<p>Let's look at the shader code for a triangle:</p>
+				
+						<p>Vertex shader example:</p>
+						<pre><code data-trim data-noescape data-line-numbers>
+				              attribute vec3 a_position;
+				              attribute vec3 a_color;
+				              uniform vec3 u_position;
+				              varying vec3 v_color;
+				              
+				              void main(void) {
+				              v_color = a_color;
+				              gl_Position = vec4(u_position + a_position, 1.0);
+				              }
+				            </code></pre>
+					</section>
+
+						<section>
+
+						<p>Example of a fragment shader:</p>
+				
+						<pre><code data-trim data-noescape data-line-numbers>
+				                        precision mediump float;
+				                        varying vec3 v_сolor;
+				                        
+				                        void main(void) {
+				                        gl_FragColor = vec4(v_color.rgb, 1.0);
+				                        }
+				          </code></pre>
+				</section>
+
+				<section>
+				
+					<p>Shaders have three types of variables:</p>
+				
+					<ul>
+						<li>attributes</li>
+						<li>uniforms</li>
+						<li>varying</li>
+					</ul>
+				</section>
+
+				<section>
+				
+					<p>The values ​​of the varying variables inside the triangle are calculated based on the values ​​of these variables at the vertices</p>
+				
+					<img src="./assets/varying.png" alt="" style="background-color: lightgray;padding: 10px; border-radius: 5px;">
+
+				</section>
+
+
+				</section>
+				
+				<section>
+				
+					<p>Get the WebGL context</p>
+				
+					<pre><code data-trim data-noescape data-line-numbers>
+						var gl = canvas.getContext(‘webgl’);
+					</code></pre>
+
+					<pre><code data-trim data-noescape data-line-numbers>
+						var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+						gl.shaderSource(
+							vertexShader,
+							document.getElementById('vertexShader').text);
+						gl.compileShader(vertexShader);
+						
+						var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+						gl.shaderSource(
+							fragmentShader,
+							document.getElementById('fragmentShader').text);
+						gl.compileShader(fragmentShader);
+					</code></pre>
+
+					<pre><code data-trim data-noescape data-line-numbers>
+						var program = gl.createProgram();
+						gl.attachShader(program, vertexShader);
+						gl.attachShader(program, fragmentShader);
+						gl.linkProgram(program);
+					</code></pre>
+				
+				</section>
+
+				<section>
+					<section>
+						<p>uniform variables are linked directly to variables from js</p>
+					
+						<ul>
+							<li>vertex buffer</li>
+							<li>color buffer</li>
+						</ul>
+						
+						<br>
+
+						<img src="./assets/buffer.png" alt="" style="background-color: lightgray;padding: 10px; border-radius: 5px;">
+						
+					</section>
+
+						<section>
+							<p>Buffer features</p>
+						
+							<ul>
+								<li>data is transferred to the buffer as one array without nesting</li>
+								<li>Only typed arrays should be passed</li>
+								<li>what buffer will be used</li>
+							</ul>
+						
+							<pre><code data-trim data-noescape data-line-numbers>
+								var vertexBuffer = gl.createBuffer();
+								var vertices = [0, 0, 0, 0.5, 1, 0, 1, 0, 0];
+								gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+								gl.bufferData(
+									gl.ARRAY_BUFFER,
+									new Float32Array(vertices),
+									gl.STATIC_DRAW
+									);
+							</code></pre>
+						
+						</section>
+
+						<section>
+							<p>Let's draw a triangle</p>
+						
+							<pre>
+								<code data-trim data-noescape data-line-numbers>
+													// Let's get the location of variables in the shader program
+													var uPosition = gl.getUniformLocation(program, 'u_position');
+													var aPosition = gl.getAttribLocation(program, 'a_position');
+													var aColor = gl.getAttribLocation(program, 'a_color');
+													
+													// Let's specify which shader program we intend to use further
+													gl.useProgram(program);
+													
+													// We pass the triangle position to the uniform variable
+													gl.uniform3fv(uPosition, [0, 0, 0]);
+													
+													// Linking color data
+													gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+													gl.enableVertexAttribArray(aColor);
+
+													// The second argument is the dimension, RGB has 3 components
+													gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+													
+													// And the peaks
+													gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+													gl.enableVertexAttribArray(aPosition);
+													gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0);
+													
+													// Clear the scene by painting it white
+													gl.clearColor(1.0, 1.0, 1.0, 1.0);
+													gl.clear(gl.COLOR_BUFFER_BIT);
+													
+													// Draw a triangle
+													gl.drawArrays(gl.TRIANGLES, 0, 3);
+							</code>
+						</pre>
+						
+						</section>
+
+						<section>
+							<p>Our triangle is ready.</p>
+						
+							
+						<img src="./assets/triangle-result.png" alt="">
+							<br>
+
+
+						<a href="https://jsfiddle.net/Trufi/c11xno8j/">The full example code can be viewed here</a>
+						<a href="https://jsfiddle.net/Trufi/c11xno8j/">https://jsfiddle.net/Trufi/c11xno8j/</a>
+						
+						</section>
+
+				</section>
+
+				<section>
+					<p>Next time we'll look at how to draw a rotating cube.</p>
+				
+
+					<iframe src="https://jsfiddle.net/Trufi/r36cw20t/embedded/result/" frameborder="0" style="width: 100%; height: 400px;"></iframe>
+
+					<a href="https://jsfiddle.net/Trufi/r36cw20t/embedded/result/">https://jsfiddle.net/Trufi/r36cw20t/embedded/result/</a>
+
+				
+				</section>
+				
+				</section>
+			</div>
+		</div>
+
+		<script src="./reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
